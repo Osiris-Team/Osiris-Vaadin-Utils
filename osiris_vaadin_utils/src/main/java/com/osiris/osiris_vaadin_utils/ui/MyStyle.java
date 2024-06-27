@@ -32,6 +32,7 @@ import com.osiris.osiris_vaadin_utils.ui.texts.Text;
 import com.osiris.osiris_vaadin_utils.ui.tooltips.TooltipDefault;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasStyle;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
@@ -80,10 +81,10 @@ public interface MyStyle extends ThemableLayout,
         return comp;
     }
 
-    static Div seperator(){
-        Div div = new Div();
-        div.getStyle().set("border-bottom", BORDER_STYLE);
-        return div;
+    static Html divider(){
+        Html hr = new Html("<hr></hr>");
+        hr.getElement().getStyle().set("border-bottom", BORDER_STYLE);
+        return hr;
     }
 
     static <T extends Component & HasStyle> T tooltip(T comp, String txt) {

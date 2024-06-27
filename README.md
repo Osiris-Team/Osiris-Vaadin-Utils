@@ -1,6 +1,8 @@
 # Osiris-Vaadin-Utils
 
 ## Get this fork via [JitPack](https://jitpack.io/#Osiris-Team/Osiris-Vaadin-Utils/LATEST).
+#### Requires Java 19 or higher
+
 
 ## Development instructions
 

@@ -1,47 +1,65 @@
-# java-maven-starter
-Java API or LIB starter project built with Maven.
+# Pdf Viewer component for Vaadin Flow
 
-Simply clone/download this repo, rename the placeholders, and you are good to go!
+## Get this fork via [JitPack](https://jitpack.io/#Osiris-Team/vcf-pdf-viewer-flow/LATEST).
 
-## Features
- - Documentation and dependencies documentation get included.
- - GitHub Workflow to publish releases in one click.
- - Safe application/library at runtime by forcing you to solve duplicate dependencies in the pom.xml (maven-enforcer-plugin).
- - Gitignore ignores various IDEA files.
- - Tests get ran at build.
- - Resource filtering enabled.
- - Basic file structure.
+This is the server-side component of [&lt;vcf-pdf-viewer&gt; Web Component](https://github.com/vaadin-component-factory/vcf-pdf-viewer). The component uses [PDF.js](https://github.com/mozilla/pdf.js) library to display pdf files.
 
+This component is part of Vaadin Component Factory.
 
-## GitHub Workflows
-- `release.yml` to create releases with one click.
-- `build.yml` to automatically build the project after commits and/or on pull requests before merging.
-- `test.yml` to automatically build and run tests on the project and/or on pull requests before merging.
+## Description 
 
-## Readme template
+Pdf Viewer component provides support to the following features:
 
-# INSERT_PROJECT_NAME_HERE
-INSERT_PROJECT_DESCRIPTION_HERE
+- Display a pdf file.
+- Display a thumbnail's viewer.
+- Set zoom.
+- Navigate to a certain page.
+- Open or close thumbnail's viewer.
+- Add a listener on change page when clicking on thumbnail.
+- Download the pdf file.
 
-## Links
-Insert_important_links_here
+From version 2.5.x:
 
-## Installation
-1. Install latest Java (JDK or JRE, both work) [here](https://adoptium.net/temurin/releases/).
-2. Download the latest jar or zip file from the releases (on the top right of this site) or use the file that was sent to you directly.
-3. Open a terminal in your downloads folder ([video](https://www.youtube.com/watch?v=sE2SyNyM3Aw)).
-4. Run the command `java -jar NAME.jar` (or unpack the zip if provided, and execute the run script (`.\run.bat` or `./run.sh`)).
-5. Done!
+- Printing the pdf file (implemented with [Print.js](https://www.npmjs.com/package/print-js)).
 
-## Motivation
-Explain_why_you_started_this_project
+## Development instructions
 
-## Features
-Insert_a_short_and_consise_list_of_features_here
+- Build the project and install the add-on locally:
+```
+mvn clean install
+```
+- For starting the demo server go to pdf-viewer-demo and run:
+```
+mvn jetty:run
+```
+This deploys demo at http://localhost:8080
 
-## Examples
-Insert_usage_examples_here
+## How to use it - Example
 
-## FAQ
-Frequently_asked_questions_here
+### Viewer
+```java
+PdfViewer pdfViewer = new PdfViewer();
+StreamResource resource = new StreamResource("example.pdf", () -> getClass().getResourceAsStream("/pdf/example.pdf"));
+pdfViewer.setSrc(resource);
+pdfViewer.openThumbnailsView();
+add(pdfViewer);    
+```
 
+### Editor
+```java
+PdfEditor pdfEditor = new PdfEditor();
+StreamResource resource = new StreamResource("example.pdf", () -> getClass().getResourceAsStream("/pdf/example.pdf"));
+pdfEditor.setSrc(resource);
+pdfEditor.addSaveListener(pdfBytes -> {
+  System.out.println("PDF saved. Size in bytes: " + pdfBytes.length);
+});
+add(pdfEditor);   
+```
+
+## Missing features or bugs
+
+You can report any issue or missing feature on [GitHub](https://github.com/vaadin-component-factory/vcf-pdf-viewer/issues).
+
+## License
+
+Apache License 2.0.

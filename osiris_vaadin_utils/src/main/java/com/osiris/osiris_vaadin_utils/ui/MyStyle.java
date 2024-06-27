@@ -33,6 +33,7 @@ import com.osiris.osiris_vaadin_utils.ui.tooltips.TooltipDefault;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.ThemableLayout;
@@ -79,6 +80,12 @@ public interface MyStyle extends ThemableLayout,
         return comp;
     }
 
+    static Div seperator(){
+        Div div = new Div();
+        div.getStyle().set("border-bottom", BORDER_STYLE);
+        return div;
+    }
+
     static <T extends Component & HasStyle> T tooltip(T comp, String txt) {
         new TooltipDefault(comp, txt);
         return comp;
@@ -91,10 +98,10 @@ public interface MyStyle extends ThemableLayout,
         return img;
     }
 
-    public static class WrappedComp{
-        public HasStyle comp;
+    public static class WrappedComp<T extends Component & HasStyle>{
+        public T comp;
 
-        public WrappedComp(HasStyle comp) {
+        public WrappedComp(T comp) {
             this.comp = comp;
         }
 
@@ -104,8 +111,8 @@ public interface MyStyle extends ThemableLayout,
         }
     }
 
-    static  WrappedComp wrap(HasStyle comp) {
-        return new WrappedComp(comp);
+    static <T extends Component & HasStyle> WrappedComp<T> wrap(T comp) {
+        return new WrappedComp<>(comp);
     }
 
     default void initStyle() {

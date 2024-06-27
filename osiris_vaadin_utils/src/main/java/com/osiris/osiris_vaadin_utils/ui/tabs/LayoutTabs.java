@@ -28,7 +28,7 @@ package com.osiris.osiris_vaadin_utils.ui.tabs;
  * #L%
  */
 
-import com.osiris.jlib.logger.AL;
+import com.osiris.osiris_vaadin_utils.AL;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;

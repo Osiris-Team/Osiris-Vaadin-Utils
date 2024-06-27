@@ -20,7 +20,21 @@ package com.osiris.osiris_vaadin_utils;
  * #L%
  */
 
-public class RenameMe {
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+public class AL {
+    private static final Logger logger = Logger.getLogger("Osiris-Vaadin-Utils");
 
+    public static void info(String msg) {
+        logger.log(Level.INFO, msg);
+    }
+
+    public static void debug(Class<?> clazz, String msg) {
+        logger.log(Level.INFO, "("+clazz.getSimpleName()+") "+msg);
+    }
+
+    public static void warn(Exception e) {
+        logger.log(Level.WARNING, e.getMessage(), e);
+    }
 }

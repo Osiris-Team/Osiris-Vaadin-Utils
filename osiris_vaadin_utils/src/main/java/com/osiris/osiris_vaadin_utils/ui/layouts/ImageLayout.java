@@ -1,6 +1,7 @@
 package com.osiris.osiris_vaadin_utils.ui.layouts;
 
 import com.osiris.osiris_vaadin_utils.ui.notifications.Notify;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Image;
@@ -12,21 +13,24 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 /**
  * An abstract layout for managing images with upload, display, update, and delete functionality.
  * This class is designed to be extended with specific database operations implemented and customizations applied.
+ * It supports asynchronous database operations.
  */
 public abstract class ImageLayout extends HLayoutScroll {
 
-    protected static final String DEFAULT_IMAGE_WIDTH = "20vw";
-    protected static final String DEFAULT_IMAGE_DATA_URL_PREFIX = "data:image;base64,";
+    protected static String DEFAULT_IMAGE_WIDTH = "20vw";
+    protected static String DEFAULT_IMAGE_DATA_URL_PREFIX = "data:image;base64,";
 
-    protected final boolean isAdmin;
-    protected final MultiFileMemoryBuffer buffer;
-    protected final Upload upload;
-    protected final Consumer<Throwable> exceptionHandler;
+    protected boolean isAdmin;
+    protected MultiFileMemoryBuffer buffer;
+    protected Upload upload;
+    protected Consumer<Throwable> exceptionHandler;
+    protected UI ui;
 
     /**
      * Constructs an ImageLayout with default settings (non-admin mode).
@@ -41,6 +45,7 @@ public abstract class ImageLayout extends HLayoutScroll {
      * @param isAdmin true if the layout should be in admin mode, false otherwise
      */
     public ImageLayout(boolean isAdmin) {
+        this.ui = UI.getCurrent();
         this.isAdmin = isAdmin;
         this.buffer = new MultiFileMemoryBuffer();
         this.upload = createUpload();
@@ -101,8 +106,12 @@ public abstract class ImageLayout extends HLayoutScroll {
         if (!isAdmin) return;
         try (InputStream inputStream = buffer.getInputStream(fileName)) {
             String imageData = Base64.getEncoder().encodeToString(IOUtils.toByteArray(inputStream));
-            int id = dbAddImage(imageData);
-            addImg(id, imageData);
+            dbAddImage(imageData)
+                    .thenAccept(id -> this.ui.access(() -> addImg(id, imageData)))
+                    .exceptionally(ex -> {
+                        this.ui.access(() -> exceptionHandler.accept(ex));
+                        return null;
+                    });
         } catch (IOException e) {
             exceptionHandler.accept(e);
         }
@@ -169,9 +178,15 @@ public abstract class ImageLayout extends HLayoutScroll {
             try (InputStream inputStream = buffer.getInputStream(fileName)) {
                 String imageData = Base64.getEncoder().encodeToString(IOUtils.toByteArray(inputStream));
                 int imageId = Integer.parseInt(id);
-                dbUpdateImage(imageId, imageData);
-                updateImg(imageId, imageData);
-                dialog.close();
+                dbUpdateImage(imageId, imageData)
+                        .thenRun(() -> this.ui.access(() -> {
+                            updateImg(imageId, imageData);
+                            dialog.close();
+                        }))
+                        .exceptionally(ex -> {
+                            this.ui.access(() -> exceptionHandler.accept(ex));
+                            return null;
+                        });
             } catch (IOException e) {
                 exceptionHandler.accept(e);
             }
@@ -192,9 +207,15 @@ public abstract class ImageLayout extends HLayoutScroll {
         btnRemove.addClickListener(e -> {
             img.getId().ifPresent(id -> {
                 int imageId = Integer.parseInt(id);
-                dbDeleteImage(imageId);
-                deleteImg(imageId);
-                dialog.close();
+                dbDeleteImage(imageId)
+                        .thenRun(() -> this.ui.access(() -> {
+                            deleteImg(imageId);
+                            dialog.close();
+                        }))
+                        .exceptionally(ex -> {
+                            this.ui.access(() -> exceptionHandler.accept(ex));
+                            return null;
+                        });
             });
         });
         return btnRemove;
@@ -271,27 +292,27 @@ public abstract class ImageLayout extends HLayoutScroll {
     }
 
     /**
-     * Abstract method to add an image to the database.
+     * Abstract method to add an image to the database asynchronously.
      *
      * @param imageBase64 The base64 encoded image data
-     * @return The unique identifier of the newly added image
+     * @return A CompletableFuture that completes with the unique identifier of the newly added image
      */
-    protected abstract int dbAddImage(String imageBase64);
+    protected abstract CompletableFuture<Integer> dbAddImage(String imageBase64);
 
     /**
-     * Abstract method to update an image in the database.
+     * Abstract method to update an image in the database asynchronously.
      *
      * @param id The unique identifier of the image to update
      * @param imageBase64 The new base64 encoded image data
-     * @return The number of rows affected in the database
+     * @return A CompletableFuture that completes when the update operation is finished
      */
-    protected abstract int dbUpdateImage(int id, String imageBase64);
+    protected abstract CompletableFuture<Void> dbUpdateImage(int id, String imageBase64);
 
     /**
-     * Abstract method to delete an image from the database.
+     * Abstract method to delete an image from the database asynchronously.
      *
      * @param id The unique identifier of the image to delete
-     * @return The number of rows affected in the database
+     * @return A CompletableFuture that completes when the delete operation is finished
      */
-    protected abstract int dbDeleteImage(int id);
+    protected abstract CompletableFuture<Void> dbDeleteImage(int id);
 }

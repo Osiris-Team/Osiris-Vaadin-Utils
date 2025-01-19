@@ -36,7 +36,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 
 /**
  * A DIV containing an HorizontalLayout, VerticalLayout and a WindowResizeEvent listener.
- * Shows the VerticalLayout when the windows height > width and the HorizontalLayout when height < width.
+ * Shows the VerticalLayout when the windows height biggerthan width and the HorizontalLayout when height smallerthan width.
  */
 @Tag("better-layout")
 public class BetterLayout extends Div implements FlexComponent {

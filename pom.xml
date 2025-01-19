@@ -9,11 +9,9 @@
         <module>osiris_vaadin_utils</module>
         <module>osiris_vaadin_utils_demo</module>
     </modules>
-    <name>Pdf Viewer</name>
-    <description>Pdf Viewer component based on pdf.js library</description>
 
     <properties>
-        <vaadin.version>22.0.17</vaadin.version>
+        <vaadin.version>24.6.2</vaadin.version>
         <maven.compiler.source>19</maven.compiler.source>
         <maven.compiler.target>19</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

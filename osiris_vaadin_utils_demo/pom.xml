@@ -18,8 +18,7 @@
     </organization>
 
     <properties>
-        <vaadin.version>22.0.17</vaadin.version>
-        <flow.version>9.0.1</flow.version>
+        <vaadin.version>24.6.2</vaadin.version>
         <maven.compiler.source>19</maven.compiler.source>
         <maven.compiler.target>19</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -114,7 +113,7 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>flow-component-demo-helpers</artifactId>
-            <version>${flow.version}</version>
+            <version>LATEST</version>
         </dependency>
 
         <dependency>
@@ -189,7 +188,6 @@
                             <goal>prepare-frontend</goal>
                         </goals>
                         <configuration>
-                            <convertHtml>false</convertHtml>
                             <pnpmEnable>false</pnpmEnable>
                         </configuration>
                     </execution>
